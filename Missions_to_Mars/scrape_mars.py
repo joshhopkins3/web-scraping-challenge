@@ -1,21 +1,17 @@
 from splinter import Browser
 from bs4 import BeautifulSoup as bs
 import pandas as pd
-import time
+from webdriver_manager.chrome import ChromeDriverManager
 
 
-def init_browser():
-    executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
-    return Browser("chrome", **executable_path, headless=False)
+executable_path = {'executable_path': ChromeDriverManager().install()}
+browser = Browser("chrome", **executable_path, headless=False)
 
 
 def scrape():
-    browser = init_browser()
 
     # --- Visit Mars News site ---
     browser.visit('https://mars.nasa.gov/news/')
-
-    time.sleep(1)
 
     # Scrape page into Soup
     html = browser.html
@@ -33,13 +29,6 @@ def scrape():
     
     # --- Visit JPL site for featured Mars image ---
     browser.visit('hhttps://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html')
-
-    time.sleep(1)
-
-    # Click through to full image
-    browser.click_link_by_partial_text('FULL IMAGE')
-    time.sleep(2)
-    browser.click_link_by_partial_text('more info')
 
     # Scrape page into Soup
     html = browser.html
@@ -62,14 +51,13 @@ def scrape():
     # Convert table to html
     mars_facts = [mars_df.to_html(classes='data table table-borderless', index=False, header=False, border=0)]
 
+
+
+
     # --- Visit USGS Astrogeology Site ---
     browser.visit('https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars')
     
-    time.sleep(1)
-    
-
-
-    # --- Search for Hemisphere titles --- 
+    # Search for Hemisphere titles
 
     html = browser.html
     soup = bs(html, 'html.parser')
@@ -132,6 +120,7 @@ def scrape():
         full_imgs.append(img_link)
     
 
+
     # --- Zip together the list of hemisphere names and hemisphere image links ---
     mars_zip = zip(hemispheres, full_imgs)
 
@@ -157,7 +146,7 @@ def scrape():
     mars_data = {
         "news_title": news_title,
         "news_paragraph": news_paragraph,
-        "featured_image": full_imgs,
+        "featured_image": feat_url,
         "mars_facts": mars_facts,
         "hemispheres": hemisphere_image_urls
     }
