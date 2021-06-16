@@ -1,14 +1,16 @@
-from splinter import Browser
+from splinter import Browser, browser
 from bs4 import BeautifulSoup as bs
 import pandas as pd
-from webdriver_manager.chrome import ChromeDriverManager
 
 
-executable_path = {'executable_path': ChromeDriverManager().install()}
-browser = Browser("chrome", **executable_path, headless=False)
+def init_browser():
+    executable_path = {'executable_path': "/Users/joshhopkins/.wdm/drivers/chromedriver/mac64/91.0.4472.101/chromedriver"}
+    browser = Browser("chrome", **executable_path, headless=False)
 
 
 def scrape():
+
+    browser = init_browser()
 
     # --- Visit Mars News site ---
     browser.visit('https://mars.nasa.gov/news/')

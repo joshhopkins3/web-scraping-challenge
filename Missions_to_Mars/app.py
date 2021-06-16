@@ -14,10 +14,10 @@ mongo = PyMongo(app, uri="mongodb://localhost:27017/mars_app")
 def index():
 
     # Find one record of data from the mongo database
-    planet_mars = mongo.db.collection.find_one()
+    mars_info = mongo.db.collection.find_one()
 
     # Return template and data
-    return render_template("index.html", mars=planet_mars)
+    return render_template("index.html", mars=mars_info)
 
 
 # Route that will trigger the scrape function
@@ -25,7 +25,7 @@ def index():
 def scrape():
 
     # Run the scrape function
-    mars_data = scrape_mars.scrape_info()
+    mars_data = scrape_mars.scrape()
 
     # Update the Mongo database using update and upsert=True
     mongo.db.collection.update({}, mars_data, upsert=True)
